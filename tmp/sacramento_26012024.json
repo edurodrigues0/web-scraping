@@ -1,0 +1,132 @@
+[
+  {
+    "demonstrative": "FPM - FUNDO DE PARTICIPACAO DOS MUNICIPIOS",
+    "parcels": [
+      {
+        "parcel": "CREDITO FUNDO",
+        "value": 485186940,
+        "date": "2024-01-26T19:59:49.205Z"
+      }
+    ]
+  },
+  {
+    "demonstrative": "FEP - FUNDO ESPECIAL DO PETROLEO",
+    "parcels": [
+      {
+        "parcel": "CREDITO FUNDO",
+        "value": 7327882,
+        "date": "2024-01-26T19:59:49.207Z"
+      }
+    ]
+  },
+  {
+    "demonstrative": "ITR - IMPOSTO TERRITORIAL RURAL",
+    "parcels": [
+      {
+        "parcel": "CREDITO FUNDO",
+        "value": 8719493,
+        "date": "2024-01-26T19:59:49.211Z"
+      }
+    ]
+  },
+  {
+    "demonstrative": "ICS - ICMS ESTADUAL",
+    "parcels": [
+      {
+        "parcel": "CREDITO FUNDO",
+        "value": 698051528,
+        "date": "2024-01-26T19:59:49.214Z"
+      }
+    ]
+  },
+  {
+    "demonstrative": "CFM - COMPENSACAO FINANC. PELA EXPLORACAO MINERAL",
+    "parcels": [
+      {
+        "parcel": "CREDITO FUNDO",
+        "value": 2761901,
+        "date": "2024-01-26T19:59:49.217Z"
+      }
+    ]
+  },
+  {
+    "demonstrative": "CFH - COMPENSACAO FINANCEIRA RECURSOS HIDRICOS",
+    "parcels": [
+      {
+        "parcel": "CREDITO FUNDO",
+        "value": 214732675,
+        "date": "2024-01-26T19:59:49.219Z"
+      }
+    ]
+  },
+  {
+    "demonstrative": "ITA - ROYALTIES DE ITAIPU",
+    "parcels": [
+      {
+        "parcel": "CREDITO FUNDO",
+        "value": 2450657,
+        "date": "2024-01-26T19:59:49.220Z"
+      }
+    ]
+  },
+  {
+    "demonstrative": "IPM - IPI EXPORTACAO - COTA MUNICIPIO",
+    "parcels": [
+      {
+        "parcel": "CREDITO FUNDO",
+        "value": 5400296,
+        "date": "2024-01-26T19:59:49.222Z"
+      }
+    ]
+  },
+  {
+    "demonstrative": "FUNDEB - FNDO MANUT DES EDUC BASICA E VLRIZ PROF EDUC",
+    "parcels": [
+      {
+        "parcel": "CREDITO FUNDO",
+        "value": 168839720,
+        "date": "2024-01-26T19:59:49.233Z"
+      }
+    ]
+  },
+  {
+    "demonstrative": "SNA - SIMPLES NACIONAL",
+    "parcels": [
+      {
+        "parcel": "CREDITO FUNDO",
+        "value": 18246960,
+        "date": "2024-01-26T19:59:49.239Z"
+      }
+    ]
+  },
+  {
+    "demonstrative": "IPV - IPVA-IMPOSTO SOBRE PROP. VEICULOS AUTOMOTORES",
+    "parcels": [
+      {
+        "parcel": "CREDITO FUNDO",
+        "value": 16167288,
+        "date": "2024-01-26T19:59:49.257Z"
+      }
+    ]
+  },
+  {
+    "demonstrative": "ADO - LC 176/2020 (ADO25)",
+    "parcels": [
+      {
+        "parcel": "CREDITO FUNDO",
+        "value": 5046037,
+        "date": "2024-01-26T19:59:49.258Z"
+      }
+    ]
+  },
+  {
+    "demonstrative": "TOTAL DOS REPASSES NO PERIODO",
+    "parcels": [
+      {
+        "parcel": "CREDITO BENEF.",
+        "value": 1632931377,
+        "date": "2024-01-26T19:59:49.258Z"
+      }
+    ]
+  }
+]

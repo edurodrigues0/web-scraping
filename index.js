@@ -12,7 +12,7 @@ function formatDateForWriteInBanking(date) {
 
 async function run(city) {
   const browser = await launch({
-    headless: 'new',
+    headless: "new",
     defaultViewport: false,
   });
   const page = await browser.newPage();
@@ -46,8 +46,8 @@ async function run(city) {
     await page.waitForSelector(endOfDateSelector);
     await page.waitForSelector(dataQuerySubmit);
 
-    await page.type(startOfDateSelector, formattedDate);
-    await page.type(endOfDateSelector, formattedDate);
+    await page.type(startOfDateSelector, "01122023");
+    await page.type(endOfDateSelector, "31122023");
     await page.type(fundSelector, 'TODOS');
 
     try {
@@ -127,11 +127,6 @@ async function run(city) {
 
 const cities = [
   { name: 'sacramento', date: new Date() },
-  { name: 'uberaba', date: new Date() },
-  { name: 'franca', data: new Date() },
-  { name: 'conquista', data: new Date() },
-  { name: 'belo horizonte', data: new Date() },
-  { name: 'ribeirao preto', data: new Date() },
 ];
 
 cities.map((city) => (
