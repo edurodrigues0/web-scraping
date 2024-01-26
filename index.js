@@ -1,61 +1,72 @@
 import { load } from "cheerio";
 import { launch } from "puppeteer";
-import fs from 'node:fs'
+import fs from 'node:fs';
 
-async function run() {
+function formatDateForWriteInBanking(date) {
+  const day = date.getUTCDate().toString().padStart(2, '0');
+  const month = (date.getUTCMonth() + 1).toString().padStart(2, '0');
+  const year = date.getUTCFullYear().toString();
+
+  return day + month + year;
+}
+
+async function run(city) {
   const browser = await launch({
-    headless: false,
+    headless: 'new',
     defaultViewport: false,
   });
   const page = await browser.newPage();
-  
+
   await page.goto('https://www42.bb.com.br/portalbb/daf/beneficiario.bbx');
-  
-  // Inputs e Buttons
-  const beneficiarioSelector = '#formulario\\:txtBenef';
-  const beneficiarioSubmit = '#formulario > div:nth-child(4) > div > input:nth-child(1)';
+
+  // Inputs and Buttons
+  const beneficiarySelector = '#formulario\\:txtBenef';
+  const beneficiarySubmit = '#formulario > div:nth-child(4) > div > input:nth-child(1)';
   const startOfDateSelector = '#formulario\\:dataInicial';
   const endOfDateSelector = '#formulario\\:dataFinal';
-  const dadosDeConsultaSubmit = '#formulario > div:nth-child(7) > div > input:nth-child(1)';
-  const fundoSelector = '#formulario\\:comboFundo';
+  const dataQuerySubmit = '#formulario > div:nth-child(7) > div > input:nth-child(1)';
+  const fundSelector = '#formulario\\:comboFundo';
 
   try {
+    const currentDate = new Date();
+
+    const formattedDate = formatDateForWriteInBanking(currentDate);
+
     // Home
-    await page.click(beneficiarioSelector);
-    await page.type(beneficiarioSelector, 'araxa');
-  
+    await page.click(beneficiarySelector);
+    await page.type(beneficiarySelector, city.name);
+
     await Promise.all([
-      page.click(beneficiarioSubmit),
+      page.click(beneficiarySubmit),
       page.waitForNavigation(),
     ]);
- 
-    // Dados de consulta
+
+    // Data Query
     await page.waitForSelector(startOfDateSelector);
     await page.waitForSelector(endOfDateSelector);
-    await page.waitForSelector(dadosDeConsultaSubmit);
+    await page.waitForSelector(dataQuerySubmit);
 
-    await page.type(startOfDateSelector, '02012024', { viseble: true });
-    await page.type(endOfDateSelector, '02012024', { viseble: true });
-    await page.type(fundoSelector, 'TODOS', { viseble: true });
+    await page.type(startOfDateSelector, formattedDate);
+    await page.type(endOfDateSelector, formattedDate);
+    await page.type(fundSelector, 'TODOS');
 
     try {
       await Promise.all([
         page.waitForNavigation(),
-        page.click(dadosDeConsultaSubmit),
+        page.click(dataQuerySubmit),
       ]);
 
-    
-      const i = await page.waitForSelector('.alert.alert-danger', { visible: true, timeout: 3000 })
-      
-      if (i) {
+      const alertMessage = await page.waitForSelector('.alert.alert-danger', { visible: true, timeout: 3000 });
+
+      if (alertMessage) {
         await browser.close();
-        return null
+        return null;
       }
     } catch (err) {
-      console.error(err.message)
+      console.error(err.message);
     }
 
-    // Extrair dados
+    // Extract Data
     await page.waitForSelector('#formulario\\:demonstrativoList\\:tb');
 
     const pageData = await page.evaluate(() => {
@@ -63,52 +74,50 @@ async function run() {
         html: document.documentElement.innerHTML,
         width: document.documentElement.clientWidth,
         height: document.documentElement.clientHeight,
-      }
-    })
+      };
+    });
 
-    const $ = load(pageData.html)
+    const $ = load(pageData.html);
     const data = [];
 
     $('tr.rich-table-row.even').each((index, element) => {
       const rowData = {};
-    
-      // Obter o nome do demonstrativo
-      rowData.nomeDemonstrativo = $(element).find('.rich-table-cell').text().replace(/\s+/g, ' ').trim();
-    
-      // Obter as informações das sub-tabelas
-      const parcelas = [];
+
+      // Get the name of the statement
+      rowData.demonstrative = $(element).find('.rich-table-cell').text().replace(/\s+/g, ' ').trim();
+
+      // Get information from sub-tables
+      const parcels = [];
       $(element).nextUntil('tr.rich-table-row.even', 'tr.rich-subtable-row').each((subIndex, subElement) => {
         const subData = {};
-        subData.parcela = $(subElement).find('.rich-subtable-cell.texto1').text().trim();
-        subData.valor = $(subElement).find('.rich-subtable-cell.extratoValorPositivoAlinhaDireita').text().slice(2).trim();
-        subData.data = new Date()
+        subData.parcel = $(subElement).find('.rich-subtable-cell.texto1').text().trim();
+        subData.value = $(subElement).find('.rich-subtable-cell.extratoValorPositivoAlinhaDireita').text().slice(2).trim();
+        subData.date = new Date();
 
-        if(subData.parcela === 'CREDITO BENEF.' || subData.parcela === 'CREDITO FUNDO') {
-          if (subData.valor !== '') {
-            let valor;
-            let valorFormatado;
-        
-            if (subData.valor.includes('C')) {
-               valorFormatado = subData.valor.replace("C", "").replace(",", ".");
-               valor = parseFloat(valorFormatado.replace(/\./g, ''));
-        
-               subData.valor = valor;
-               return parcelas.push(subData);
-             }
-            parcelas.push(subData);
+        if (subData.parcel === 'CREDITO BENEF.' || subData.parcel === 'CREDITO FUNDO') {
+          if (subData.value !== '') {
+            let amount;
+            let formattedAmount;
+
+            if (subData.value.includes('C')) {
+              formattedAmount = subData.value.replace("C", "").replace(",", ".");
+              amount = parseFloat(formattedAmount.replace(/\./g, ''));
+
+              subData.value = amount;
+              return parcels.push(subData);
+            }
+            parcels.push(subData);
           }
         }
       });
-    
-      if (parcelas.length > 0) {
-        rowData.parcelas = parcelas
-        data.push(rowData)
+
+      if (parcels.length > 0) {
+        rowData.parcels = parcels;
+        data.push(rowData);
       }
     });
-    
-    // Exibindo os resultados
-    fs.writeFileSync('data.json', JSON.stringify(data, null, 2))
 
+    fs.writeFileSync(`./tmp/${city.name}_${formattedDate}.json`, JSON.stringify(data, null, 2));
   } catch (err) {
     console.error(err.message);
   } finally {
@@ -116,4 +125,15 @@ async function run() {
   }
 }
 
-run();
+const cities = [
+  { name: 'sacramento', date: new Date() },
+  { name: 'uberaba', date: new Date() },
+  { name: 'franca', data: new Date() },
+  { name: 'conquista', data: new Date() },
+  { name: 'belo horizonte', data: new Date() },
+  { name: 'ribeirao preto', data: new Date() },
+];
+
+cities.map((city) => (
+  run(city)
+));
